@@ -220,6 +220,8 @@ namespace RobotLocalization
   {
       wrapper.summary(diagnostic_msgs::DiagnosticStatus::OK, "DEMO!");
       wrapper.add("Transform good",transform_good_);
+      wrapper.add("Use odometry yaw", use_odometry_yaw_);
+      wrapper.add("Use manual datum", use_manual_datum_);
       wrapper.add("Has transform odom",has_transform_odom_);
       wrapper.add("Has transform GPS", has_transform_gps_);
       wrapper.add("Has transform IMU", has_transform_imu_);
@@ -547,6 +549,8 @@ namespace RobotLocalization
 
         has_transform_imu_ = true;
       }
+      else
+          ROS_ERROR_STREAM("Cannot transform IMU");
     }
   }
 
