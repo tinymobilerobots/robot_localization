@@ -46,6 +46,11 @@
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 
+
+#include <diagnostic_updater/diagnostic_updater.h>
+#include <diagnostic_updater/publisher.h>
+#include <diagnostic_msgs/DiagnosticStatus.h>
+
 #include <Eigen/Dense>
 
 #include <string>
@@ -69,6 +74,9 @@ class NavSatTransform
     void run();
 
   private:
+    diagnostic_updater::Updater diagnosticUpdater_;
+    void updateDiagnostics(diagnostic_updater::DiagnosticStatusWrapper &wrapper);
+
     //! @brief Computes the transform from the UTM frame to the odom frame
     //!
     void computeTransform();

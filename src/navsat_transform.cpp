@@ -171,6 +171,9 @@ namespace RobotLocalization
       filtered_gps_pub = nh.advertise<sensor_msgs::NavSatFix>("gps/filtered", 10);
     }
 
+    diagnosticUpdater_.setHardwareID("navsat_transform");
+    diagnosticUpdater_.add("Diagnostics", this, &NavSatTransform::updateDiagnostics);
+
     // Sleep for the parameterized amount of time, to give
     // other nodes time to start up (not always necessary)
     ros::Duration start_delay(delay);
@@ -208,9 +211,22 @@ namespace RobotLocalization
           }
         }
       }
-
+      diagnosticUpdater_.update();
       rate.sleep();
     }
+  }
+
+  void NavSatTransform::updateDiagnostics(diagnostic_updater::DiagnosticStatusWrapper &wrapper)
+  {
+      wrapper.summary(diagnostic_msgs::DiagnosticStatus::OK, "DEMO!");
+      wrapper.add("Transform good",transform_good_);
+      wrapper.add("Has transform odom",has_transform_odom_);
+      wrapper.add("Has transform GPS", has_transform_gps_);
+      wrapper.add("Has transform IMU", has_transform_imu_);
+      wrapper.add("GPS frame id", gps_frame_id_);
+      wrapper.add("World frame id",world_frame_id_);
+      wrapper.add("Base link frame id",base_link_frame_id_);
+      wrapper.add("UTM zone", utm_zone_);
   }
 
   void NavSatTransform::computeTransform()
