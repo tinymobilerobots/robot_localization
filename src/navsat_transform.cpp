@@ -155,7 +155,7 @@ namespace RobotLocalization
     }
 
     ros::Subscriber odom_sub = nh.subscribe("odometry/filtered", 1, &NavSatTransform::odomCallback, this);
-    ros::Subscriber gps_sub = nh.subscribe("gps/fix", 1, &NavSatTransform::gpsFixCallback, this);
+    ros::Subscriber gps_sub = nh.subscribe("gps/fix", 1, &NavSatTransform::gpsFixCallback, this, ros::TransportHints().tcpNoDelay(true));
     ros::Subscriber imu_sub;
 
     if (!use_odometry_yaw_ && !use_manual_datum_)

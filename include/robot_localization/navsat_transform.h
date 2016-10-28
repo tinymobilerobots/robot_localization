@@ -36,6 +36,7 @@
 #include <robot_localization/SetDatum.h>
 
 #include <ros/ros.h>
+#include <ros/transport_hints.h>
 
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/Imu.h>
