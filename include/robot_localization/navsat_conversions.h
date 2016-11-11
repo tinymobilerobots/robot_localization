@@ -215,6 +215,9 @@ static inline void LLtoUTM(const double Lat, const double Long,
     else if ( LongTemp >= 21.0 && LongTemp < 33.0 ) ZoneNumber = 35;
     else if ( LongTemp >= 33.0 && LongTemp < 42.0 ) ZoneNumber = 37;
   }
+
+  ZoneNumber = 32; // Temp hardcoded
+
         // +3 puts origin in middle of zone
   LongOrigin = (ZoneNumber - 1)*6 - 180 + 3;
   LongOriginRad = LongOrigin * RADIANS_PER_DEGREE;
