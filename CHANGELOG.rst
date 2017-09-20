@@ -2,6 +2,42 @@
 Changelog for package robot_localization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.4.0 (2017-06-12)
+------------------
+* Updated documentation
+* Added reset_on_time_jump option
+* Added feature to optionally publish utm frame as parent in navsat_transform_node
+* Moved global callback queue reset
+* Added initial_state parameter and documentation
+* Fixed ac/deceleration gains default logic
+* Added gravity parameter
+* Added delay and throttle if tf lookup fails
+* Fixed UKF IMUTwistBasicIO test
+* Added transform_timeout parameter
+* Set gps_odom timestamp before tf2 lookuptransform
+* Removed non-portable sincos calls
+* Simplified logic to account for correlated error
+* Added dynamic process noise covariance calculation
+* Fixed catkin_package Eigen warning
+* Added optional publication of acceleration state
+* Contributors: Brian Gerkey, Enrique Fernandez, Jochen Sprickerhof, Rein Appeldoorn, Simon Gene Gottlieb, Tom Moore
+
+2.3.1 (2016-10-27)
+------------------
+* Adding gitignore
+* Adding remaining wiki pages
+* Adding config and prep pages
+* Adding navsat_transform_node documentation
+* use_odometry_yaw fix for n_t_n
+* Fixing issue with manual pose reset when history is not empty
+* Getting inverse transform when looking up robot's pose.
+* Sphinx documentation
+* Removing forward slashes from navsat_transform input topics for template launch file
+* Adding example launch and parameter files for a two-level EKF setup with navsat_transform_node
+* Adding yaml file for navsat_transform_node, and moving parameter documentation to it.
+* Updating EKF and UKF parameter templates with usage comments
+* Contributors: Tom Moore, asimay
+
 2.3.0 (2016-07-28)
 ------------------
 * Fixed issues with datum usage and frame_ids
