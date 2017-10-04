@@ -83,8 +83,29 @@ namespace RobotLocalization
     stateVariableNames_.push_back("Y_ACCELERATION");
     stateVariableNames_.push_back("Z_ACCELERATION");
 
+    tfListener_.addCallback(tf2_ros::TransformCallback("base_frame", boost::bind(&RosFilter<T>::callbackTfFrame, this, _1, _2)));
+
     diagnosticUpdater_.setHardwareID("none");
   }
+
+  template<typename T>
+  void RosFilter<T>::callbackTfFrame(tf2_ros::TransformCallback callback, const geometry_msgs::TransformStamped& tf)
+  {
+    static double yaw = 0;
+    double updated_yaw = GeometryTools::getYaw(tf.transform);
+
+    const double yaw_rotation = FilterUtilities::clampRotation(yaw - updated_yaw);
+
+    if (std::fabs(yaw_rotation) >= 0.1)
+    {
+      Eigen::VectorXd state = filter_.getState();
+      state(StateMemberYaw) =  FilterUtilities::clampRotation(state(StateMemberYaw) + yaw_rotation);
+      filter_.setState(state);
+      ROS_INFO_STREAM("Frame rotated: " << yaw_rotation << ", adapting state");
+      yaw = updated_yaw;
+    }
+  }
+
 
   template<typename T>
   RosFilter<T>::~RosFilter()

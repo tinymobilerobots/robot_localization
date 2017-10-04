@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_geometry_msgs
   tf2_ros
+  rtools
   xmlrpcpp)
 
 # Attempt to find Eigen using its own CMake module.
@@ -80,6 +81,7 @@ catkin_package(
     tf2
     tf2_geometry_msgs
     tf2_ros
+    rtools
     xmlrpcpp
   DEPENDS ${EIGEN_PACKAGE}
 )

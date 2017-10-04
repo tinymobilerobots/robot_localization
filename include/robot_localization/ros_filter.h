@@ -48,7 +48,8 @@
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/AccelWithCovarianceStamped.h>
-#include <tf2_ros/transform_listener.h>
+#include <rtools/transform_callback_listener.hpp>
+#include <rtools/geometry.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/message_filter.h>
 #include <tf2/LinearMath/Transform.h>
@@ -259,6 +260,8 @@ template<class T> class RosFilter
                        const std::string &targetFrame);
 
   protected:
+    void callbackTfFrame(tf2_ros::TransformCallback callback, const geometry_msgs::TransformStamped& tf);
+
     //! @brief Finds the latest filter state before the given timestamp and makes it the current state again.
     //!
     //! This method also inserts all measurements between the older filter timestamp and now into the measurements
@@ -564,7 +567,7 @@ template<class T> class RosFilter
 
     //! @brief Transform listener for receiving transforms
     //!
-    tf2_ros::TransformListener tfListener_;
+    tf2_ros::TransformCallbackListener tfListener_;
 
     //! @brief For future (or past) dating the world_frame->base_link_frame transform
     //!
