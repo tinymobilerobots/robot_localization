@@ -100,13 +100,11 @@ namespace RobotLocalization
     {
       Eigen::VectorXd state = filter_.getState();
       state(StateMemberYaw) =  FilterUtilities::clampRotation(state(StateMemberYaw) + yaw_rotation);
-      filter_.setState(state);
 
       // It is seen that the filter history combined with an old measurement will cause the set state to be overwritten
-      // Thus we will clear the history and callback queue
-      filterStateHistory_.clear();
-      measurementHistory_.clear();
-      ros::getGlobalCallbackQueue()->clear();
+      reset();
+
+      filter_.setState(state);
       
       ROS_INFO_STREAM("Frame rotated: " << yaw_rotation << ", adapting state");
       yaw = updated_yaw;
