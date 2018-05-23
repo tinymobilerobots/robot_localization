@@ -102,8 +102,8 @@ namespace RobotLocalization
       state(StateMemberYaw) =  FilterUtilities::clampRotation(state(StateMemberYaw) + yaw_rotation);
 
       // It is seen that the filter history combined with an old measurement will cause the set state to be overwritten
-      reset();
-
+      filterStateHistory_.clear();
+      
       filter_.setState(state);
       
       ROS_INFO_STREAM("Frame rotated: " << yaw_rotation << ", adapting state");
