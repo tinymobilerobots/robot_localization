@@ -610,6 +610,7 @@ template<class T> class RosFilter
     // front() refers to the filter state with the earliest timestamp.
     // back() refers to the filter state with the latest timestamp.
     FilterStateHistoryDeque filterStateHistory_;
+  bool filterStateHistoryInvalid_;
 
     //! @brief A deque of previous measurements which is implicitly ordered from earliest to latest measurement.
     // when popped from the measurement priority queue.

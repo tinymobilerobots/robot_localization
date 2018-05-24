@@ -65,7 +65,8 @@ namespace RobotLocalization
       publishAcceleration_(false),
       twoDMode_(false),
       useControl_(false),
-      smoothLaggedData_(false)
+      smoothLaggedData_(false),
+      filterStateHistoryInvalid_(false)
   {
     stateVariableNames_.push_back("X");
     stateVariableNames_.push_back("Y");
@@ -102,7 +103,7 @@ namespace RobotLocalization
       state(StateMemberYaw) =  FilterUtilities::clampRotation(state(StateMemberYaw) + yaw_rotation);
 
       // It is seen that the filter history combined with an old measurement will cause the set state to be overwritten
-      filterStateHistory_.clear();
+      filterStateHistoryInvalid_ = true ;
       
       filter_.setState(state);
       
@@ -2996,6 +2997,13 @@ namespace RobotLocalization
     {
       RF_DEBUG("Insufficient history to revert to time " << time << "\n");
 
+      return false;
+    }
+
+    if (filterStateHistoryInvalid_)
+    {
+      filterStateHistoryInvalid_ = false;
+      filterStateHistory_.clear();
       return false;
     }
 
