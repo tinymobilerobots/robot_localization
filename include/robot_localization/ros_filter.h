@@ -553,6 +553,10 @@ template<class T> class RosFilter
     //!
     bool smoothLaggedData_;
 
+    //! @brief Whether or not we use reset on old data
+    //!
+    bool resetWithOldData_;
+
     //! @brief Contains the state vector variable names in string format
     //!
     std::vector<std::string> stateVariableNames_;

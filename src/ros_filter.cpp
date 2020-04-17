@@ -66,6 +66,7 @@ namespace RobotLocalization
       twoDMode_(false),
       useControl_(false),
       smoothLaggedData_(false),
+      resetWithOldData_(false),
       filterStateHistoryInvalid_(false)
   {
     stateVariableNames_.push_back("X");
@@ -566,6 +567,34 @@ namespace RobotLocalization
         restoredMeasurementCount = static_cast<int>(measurementQueue_.size()) - originalCount;
       }
 
+      if (!smoothLaggedData_ && resetWithOldData_ && firstMeasurement->time_ < filter_.getLastMeasurementTime())
+      {
+        RF_DEBUG("Received a measurement that was " << filter_.getLastMeasurementTime() - firstMeasurement->time_ <<
+                 " seconds in the past. Reverting filter state and measurement queue...");
+
+        // remove history measurements that are newer than this measurement and same topic.
+        std::deque<MeasurementPtr>::iterator it = measurementHistory_.begin();
+        while (it != measurementHistory_.end())
+        {
+          if (((*it)->time_ >= firstMeasurement->time_) && (firstMeasurement->topicName_ == (*it)->topicName_))
+            measurementHistory_.erase(it--);
+          it++;
+        }
+
+
+        int originalCount = static_cast<int>(measurementQueue_.size());
+        if (!revertTo(firstMeasurement->time_ - 1e-9))
+        {
+          RF_DEBUG("ERROR: history interval is too small to revert to time " << firstMeasurement->time_ << "\n");
+          ROS_WARN_STREAM_THROTTLE(10.0, "Received old measurement for topic " << firstMeasurement->topicName_ <<
+                                   ", but history interval is insufficiently sized to "
+                                   "revert state and measurement queue.");
+          restoredMeasurementCount = 0;
+        }
+
+        restoredMeasurementCount = static_cast<int>(measurementQueue_.size()) - originalCount;
+      }
+
       while (!measurementQueue_.empty() && ros::ok())
       {
         MeasurementPtr measurement = measurementQueue_.top();
@@ -595,7 +624,7 @@ namespace RobotLocalization
         filter_.processMeasurement(*(measurement.get()));
 
         // Store old states and measurements if we're smoothing
-        if (smoothLaggedData_)
+        if (smoothLaggedData_ || resetOnTimeJump_)
         {
           // Invariant still holds: measurementHistoryDeque_.back().time_ < measurementQueue_.top().time_
           measurementHistory_.push_back(measurement);
@@ -783,16 +812,24 @@ namespace RobotLocalization
     nhLocal_.param("smooth_lagged_data", smoothLaggedData_, false);
     nhLocal_.param("history_length", historyLength_, 0.0);
 
+    // Reset on old data
+    nhLocal_.param("reset_on_old_data", resetWithOldData_, false);
+
     // Wether we reset filter on jump back in time
     nhLocal_.param("reset_on_time_jump", resetOnTimeJump_, false);
 
-    if (!smoothLaggedData_ && ::fabs(historyLength_) > 1e-9)
+    if (smoothLaggedData_ && resetOnTimeJump_)
+    {
+      ROS_WARN_STREAM("Both smoothLaggedData_ and resetOnTimeJump_ is specified. resetOnTimeJump_, will effectively not be used."); 
+    }
+
+    if ((!smoothLaggedData_ && !resetOnTimeJump_) && ::fabs(historyLength_) > 1e-9)
     {
       ROS_WARN_STREAM("Filter history interval of " << historyLength_ <<
                       " specified, but smooth_lagged_data is set to false. Lagged data will not be smoothed.");
     }
 
-    if (smoothLaggedData_ && historyLength_ < -1e9)
+    if ((smoothLaggedData_ || resetOnTimeJump_) && historyLength_ < -1e9)
     {
       ROS_WARN_STREAM("Negative history interval of " << historyLength_ <<
                       " specified. Absolute value will be assumed.");
@@ -1903,7 +1940,7 @@ namespace RobotLocalization
       }
 
       // Clear out expired history data
-      if (smoothLaggedData_)
+      if (smoothLaggedData_ || resetOnTimeJump_)
       {
         clearExpiredHistory(filter_.getLastMeasurementTime() - historyLength_);
       }
