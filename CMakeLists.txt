@@ -109,11 +109,11 @@ add_dependencies(navsat_transform ${PROJECT_NAME}_gencpp)
 
 # Executables
 add_executable(ekf_localization_node src/ekf_localization_node.cpp)
-add_executable(ukf_localization_node src/ukf_localization_node.cpp)
-add_executable(navsat_transform_node src/navsat_transform_node.cpp)
-add_executable(robot_localization_listener_node src/robot_localization_listener_node.cpp)
+#add_executable(ukf_localization_node src/ukf_localization_node.cpp)
+#add_executable(navsat_transform_node src/navsat_transform_node.cpp)
+#add_executable(robot_localization_listener_node src/robot_localization_listener_node.cpp)
 
-add_dependencies(robot_localization_listener_node robot_localization_gencpp)
+#add_dependencies(robot_localization_listener_node robot_localization_gencpp)
 
 # Linking
 target_link_libraries(ros_filter_utilities ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
@@ -125,11 +125,11 @@ target_link_libraries(ros_filter ekf ukf ros_filter_utilities ${catkin_LIBRARIES
 target_link_libraries(robot_localization_estimator filter_utilities filter_base ekf ukf ${EIGEN3_LIBRARIES})
 target_link_libraries(ros_robot_localization_listener robot_localization_estimator ros_filter_utilities
   ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} yaml-cpp)
-target_link_libraries(robot_localization_listener_node ros_robot_localization_listener ${catkin_LIBRARIES})
+#target_link_libraries(robot_localization_listener_node ros_robot_localization_listener ${catkin_LIBRARIES})
 target_link_libraries(ekf_localization_node ros_filter ${catkin_LIBRARIES})
-target_link_libraries(ukf_localization_node ros_filter ${catkin_LIBRARIES})
+#target_link_libraries(ukf_localization_node ros_filter ${catkin_LIBRARIES})
 target_link_libraries(navsat_transform filter_utilities ros_filter_utilities ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
-target_link_libraries(navsat_transform_node navsat_transform ${catkin_LIBRARIES})
+#target_link_libraries(navsat_transform_node navsat_transform ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -142,11 +142,11 @@ install(TARGETS
   filter_base
   filter_utilities
   navsat_transform
-  navsat_transform_node
+#  navsat_transform_node
   ros_filter
   ros_filter_utilities
   ukf
-  ukf_localization_node
+#  ukf_localization_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
